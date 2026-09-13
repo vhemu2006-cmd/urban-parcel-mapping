@@ -1,10 +1,10 @@
 fastapi
 uvicorn
 python-multipart
-numpy
+numpy==1.26.4
 pillow
 requests
 opencv-python-headless
 segmentation-models-pytorch
-torch==2.2.2
-torchvision==0.17.2
+torch
+torchvision
