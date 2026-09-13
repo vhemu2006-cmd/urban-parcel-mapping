@@ -8,7 +8,10 @@ import cv2
 import numpy as np
 import torch
 
-# Allow importing project files
+# Reduce PyTorch memory usage
+torch.set_num_threads(1)
+torch.set_num_interop_threads(1)
+
 PROJECT_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")
 )
@@ -25,8 +28,6 @@ app = FastAPI(
     version="1.0"
 )
 
-
-# Frontend connection
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -35,18 +36,10 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-
-# Select device
-device = torch.device(
-    "cuda" if torch.cuda.is_available() else "cpu"
-)
-
+device = torch.device("cpu")
 print("Using device:", device)
 
-
-# Load trained model
-model = model.to(device)
-
+# Load model on CPU
 MODEL_PATH = os.path.join(
     PROJECT_ROOT,
     "best_unet.pth"
@@ -57,20 +50,23 @@ if not os.path.exists(MODEL_PATH):
         f"Trained model not found at: {MODEL_PATH}"
     )
 
-model.load_state_dict(
-    torch.load(
-        MODEL_PATH,
-        map_location=device,
-        weights_only=True
-    )
+model = model.to(device)
+
+state_dict = torch.load(
+    MODEL_PATH,
+    map_location="cpu",
+    weights_only=True
 )
 
+model.load_state_dict(state_dict)
 model.eval()
+
+# Disable gradients permanently for inference
+for parameter in model.parameters():
+    parameter.requires_grad = False
 
 print("Trained model loaded successfully")
 
-
-# LoveDA class names
 CLASS_NAMES = {
     0: "No-data",
     1: "Background",
@@ -82,8 +78,6 @@ CLASS_NAMES = {
     7: "Agriculture"
 }
 
-
-# RGB colors
 COLOR_MAP = {
     0: (0, 0, 0),
     1: (255, 255, 255),
@@ -111,7 +105,7 @@ def model_info():
         "encoder": "ResNet18",
         "dataset": "LoveDA Urban",
         "classes": list(CLASS_NAMES.values()),
-        "device": str(device)
+        "device": "cpu"
     }
 
 
@@ -119,10 +113,6 @@ def model_info():
 async def predict(file: UploadFile = File(...)):
 
     try:
-
-        # -----------------------------------
-        # 1. Read uploaded image
-        # -----------------------------------
         contents = await file.read()
 
         image_array = np.frombuffer(
@@ -141,31 +131,20 @@ async def predict(file: UploadFile = File(...)):
                 "message": "Invalid image file"
             }
 
-        # -----------------------------------
-        # 2. Convert BGR to RGB
-        # -----------------------------------
         image_rgb = cv2.cvtColor(
             image,
             cv2.COLOR_BGR2RGB
         )
 
-        # -----------------------------------
-        # 3. Resize image
-        # -----------------------------------
         resized_image = cv2.resize(
             image_rgb,
             (256, 256),
             interpolation=cv2.INTER_AREA
         )
 
-        # -----------------------------------
-        # 4. Convert image to tensor
-        # Avoid NumPy-to-Torch conversion issue
-        # -----------------------------------
-        image_bytes = resized_image.tobytes()
-
+        # Convert without NumPy-Torch bridge
         image_tensor = torch.frombuffer(
-            image_bytes,
+            resized_image.tobytes(),
             dtype=torch.uint8
         ).clone()
 
@@ -179,34 +158,28 @@ async def predict(file: UploadFile = File(...)):
             2,
             0,
             1
-        ).float() / 255.0
+        ).float()
 
-        image_tensor = image_tensor.unsqueeze(
-            0
-        ).to(device)
+        image_tensor = image_tensor.div_(255.0)
+        image_tensor = image_tensor.unsqueeze(0)
 
-        # -----------------------------------
-        # 5. Model prediction
-        # -----------------------------------
-        with torch.no_grad():
-
+        # Inference mode uses less memory
+        with torch.inference_mode():
             output = model(image_tensor)
-
             prediction_tensor = torch.argmax(
                 output,
                 dim=1
-            ).squeeze(0).cpu()
+            ).squeeze(0)
 
-        # Convert tensor to Python list first
-        # This avoids torch.numpy() compatibility issue
         prediction = np.array(
             prediction_tensor.tolist(),
             dtype=np.int64
         )
 
-        # -----------------------------------
-        # 6. Calculate land-use distribution
-        # -----------------------------------
+        del output
+        del prediction_tensor
+        del image_tensor
+
         total_pixels = prediction.size
 
         land_use_analysis = {}
@@ -227,24 +200,15 @@ async def predict(file: UploadFile = File(...)):
                 "percentage": percentage
             }
 
-        # -----------------------------------
-        # 7. Create colored segmentation mask
-        # -----------------------------------
         colored_mask = np.zeros(
             (256, 256, 3),
             dtype=np.uint8
         )
 
         for class_id, color in COLOR_MAP.items():
+            colored_mask[prediction == class_id] = color
 
-            colored_mask[
-                prediction == class_id
-            ] = color
-
-        # -----------------------------------
-        # 8. Encode original image
-        # -----------------------------------
-        success_original, original_buffer = cv2.imencode(
+        _, original_buffer = cv2.imencode(
             ".png",
             cv2.cvtColor(
                 resized_image,
@@ -252,17 +216,11 @@ async def predict(file: UploadFile = File(...)):
             )
         )
 
-        if not success_original:
-            raise Exception("Failed to encode original image")
-
         original_base64 = base64.b64encode(
             original_buffer.tobytes()
         ).decode("utf-8")
 
-        # -----------------------------------
-        # 9. Encode segmentation image
-        # -----------------------------------
-        success_mask, mask_buffer = cv2.imencode(
+        _, mask_buffer = cv2.imencode(
             ".png",
             cv2.cvtColor(
                 colored_mask,
@@ -270,24 +228,15 @@ async def predict(file: UploadFile = File(...)):
             )
         )
 
-        if not success_mask:
-            raise Exception("Failed to encode segmentation image")
-
         segmentation_base64 = base64.b64encode(
             mask_buffer.tobytes()
         ).decode("utf-8")
 
-        # -----------------------------------
-        # 10. Generate AI report
-        # -----------------------------------
         try:
-
             ai_report = generate_land_use_report(
                 land_use_analysis
             )
-
         except Exception as agent_error:
-
             ai_report = {
                 "summary": "Land-use analysis completed successfully.",
                 "recommendations": [
@@ -297,34 +246,24 @@ async def predict(file: UploadFile = File(...)):
                 "agent_error": str(agent_error)
             }
 
-        # -----------------------------------
-        # 11. Return response
-        # -----------------------------------
         return {
             "status": "success",
             "filename": file.filename,
-
             "image_size": {
                 "width": 256,
                 "height": 256
             },
-
             "predicted_classes": [
                 int(class_id)
                 for class_id in np.unique(prediction)
             ],
-
             "land_use_analysis": land_use_analysis,
-
             "ai_report": ai_report,
-
             "original_image": original_base64,
-
             "segmentation_image": segmentation_base64
         }
 
     except Exception as error:
-
         print("Prediction error:", str(error))
 
         return {
