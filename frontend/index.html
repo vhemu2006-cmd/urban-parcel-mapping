@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Parcel Mapping</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef6fb;
+            color: #102d50;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0d47a1, #1976d2);
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header p {
+            font-size: 18px;
+            margin-top: 12px;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1500px;
+            margin: 30px auto;
+        }
+
+        .upload-box {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        input[type="file"] {
+            font-size: 17px;
+            margin: 15px;
+        }
+
+        button {
+            background: #1954c6;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 8px;
+        }
+
+        button:hover {
+            background: #0d3e9d;
+        }
+
+        button:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: #1954c6;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        .results {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .image-card {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .image-card h2 {
+            margin-top: 0;
+            font-size: 25px;
+        }
+
+        .image-card img {
+            width: 100%;
+            max-height: 550px;
+            object-fit: contain;
+            border: 3px solid #d3dfeb;
+            border-radius: 14px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            margin: 35px 0 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .land-card {
+            background: #dff1fc;
+            padding: 25px 15px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+
+        .land-card h3 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .percentage {
+            color: #0874b9;
+            font-size: 35px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .pixels {
+            font-size: 17px;
+            color: #222;
+        }
+
+        .report {
+            background: white;
+            padding: 30px;
+            margin-top: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .report h2 {
+            font-size: 30px;
+        }
+
+        .report h3 {
+            color: #1954c6;
+            margin-top: 25px;
+        }
+
+        .report li {
+            margin: 12px 0;
+            font-size: 17px;
+        }
+
+        .legend {
+            background: white;
+            padding: 25px;
+            margin-top: 35px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f1f5f9;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .color {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid #777;
+        }
+
+        .download-buttons {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 35px;
+            color: #52759b;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Urban Parcel Mapping</h1>
+    <p>AI-Powered Remote Sensing Land-Use Analysis</p>
+</header>
+
+<div class="container">
+
+    <div class="upload-box">
+        <h2>Upload Aerial Image</h2>
+
+        <input type="file" id="imageInput" accept="image/*">
+
+        <br>
+
+        <button id="analyzeBtn" onclick="analyzeImage()">
+            Analyze Image
+        </button>
+
+        <div class="loading" id="loading">
+            Processing image using AI model... Please wait.
+        </div>
+
+        <div class="error" id="error"></div>
+    </div>
+
+    <div class="results" id="results">
+
+        <div class="image-grid">
+
+            <div class="image-card">
+                <h2>Original Image</h2>
+                <img id="originalImage" alt="Original aerial image">
+            </div>
+
+            <div class="image-card">
+                <h2>Predicted Segmentation</h2>
+                <img id="predictedImage" alt="Predicted segmentation">
+            </div>
+
+        </div>
+
+        <div class="download-buttons">
+            <button onclick="downloadOriginal()">
+                Download Original Image
+            </button>
+
+            <button onclick="downloadSegmentation()">
+                Download Segmentation Image
+            </button>
+
+            <button onclick="downloadReport()">
+                Download Analysis Report
+            </button>
+        </div>
+
+        <h2 class="section-title">Land-Use Distribution</h2>
+
+        <div class="cards" id="landCards"></div>
+
+        <div class="report">
+            <h2>AI Analysis Report</h2>
+
+            <p>
+                <strong>Dominant Land Use:</strong>
+                <span id="dominantLandUse"></span>
+            </p>
+
+            <p>
+                <strong>Dominant Percentage:</strong>
+                <span id="dominantPercentage"></span>%
+            </p>
+
+            <p>
+                <strong>Summary:</strong>
+                <span id="summary"></span>
+            </p>
+
+            <h3>Observations</h3>
+            <ul id="observations"></ul>
+
+            <h3>Recommendations</h3>
+            <ul id="recommendations"></ul>
+        </div>
+
+        <div class="legend">
+            <h2>Segmentation Color Legend</h2>
+
+            <div class="legend-items">
+
+                <div class="legend-item">
+                    <span class="color" style="background:black"></span>
+                    No-data
+                </div>
+
+                <div class="legend-item">
+                    <span class="color" style="background:white"></span>
+                    Background
+                </div>
+
+                <div class="legend-item">
+                    <span class="color" style="background:red"></span>
+                    Building
+                </div>
+
+                <div class="legend-item">
+                    <span class="color" style="background:blue"></span>
+                    Road
+                </div>
+
+                <div class="legend-item">
+                    <span class="color" style="background:cyan"></span>
+                    Water
+                </div>
+
+                <div class="legend-item">
+                    <span class="color" style="background:yellow"></span>
+                    Barren Land
+                </div>
+
+                <div class="legend-item">
+                    <span class="color" style="background:lime"></span>
+                    Forest
+                </div>
+
+                <div class="legend-item">
+                    <span class="color" style="background:green"></span>
+                    Agriculture
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer>
+    Urban Parcel Mapping | AI-Powered Remote Sensing Analysis
+</footer>
+
+<script>
+    let originalImageData = "";
+    let segmentationImageData = "";
+    let latestReport = null;
+
+    async function analyzeImage() {
+
+        const input = document.getElementById("imageInput");
+        const error = document.getElementById("error");
+        const loading = document.getElementById("loading");
+        const button = document.getElementById("analyzeBtn");
+        const results = document.getElementById("results");
+
+        error.innerText = "";
+
+        if (!input.files || input.files.length === 0) {
+            error.innerText = "Please select an image first.";
+            return;
+        }
+
+        const file = input.files[0];
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        loading.style.display = "block";
+        button.disabled = true;
+        results.style.display = "none";
+
+        try {
+
+            const response = await fetch(
+                "http://127.0.0.1:8000/predict",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Backend server returned an error.");
+            }
+
+            const data = await response.json();
+
+            if (data.detail) {
+                throw new Error(
+                    typeof data.detail === "string"
+                    ? data.detail
+                    : "Invalid request sent to backend."
+                );
+            }
+
+            latestReport = data;
+
+            if (data.original_image) {
+                originalImageData = data.original_image;
+
+                if (data.original_image.startsWith("data:image")) {
+                    document.getElementById("originalImage").src =
+                        data.original_image;
+                } else {
+                    document.getElementById("originalImage").src =
+                        "data:image/png;base64," + data.original_image;
+                }
+            } else {
+                document.getElementById("originalImage").src =
+                    URL.createObjectURL(file);
+            }
+
+            const predictedBase64 =
+                data.predicted_image ||
+                data.predicted_segmentation ||
+                data.segmentation_image ||
+                data.mask_image;
+
+            if (predictedBase64) {
+
+                segmentationImageData = predictedBase64;
+
+                if (predictedBase64.startsWith("data:image")) {
+                    document.getElementById("predictedImage").src =
+                        predictedBase64;
+                } else {
+                    document.getElementById("predictedImage").src =
+                        "data:image/png;base64," + predictedBase64;
+                }
+
+            } else if (data.predicted_image_url) {
+
+                segmentationImageData = data.predicted_image_url;
+
+                document.getElementById("predictedImage").src =
+                    data.predicted_image_url;
+
+            } else {
+                document.getElementById("predictedImage").alt =
+                    "Predicted segmentation image unavailable";
+            }
+
+            displayLandUse(data.land_use_analysis);
+            displayReport(data.ai_report);
+
+            results.style.display = "block";
+
+        } catch (err) {
+
+            error.innerText = "Error: " + err.message;
+
+        } finally {
+
+            loading.style.display = "none";
+            button.disabled = false;
+
+        }
+    }
+
+    function displayLandUse(landUse) {
+
+        const cards = document.getElementById("landCards");
+        cards.innerHTML = "";
+
+        if (!landUse) {
+            return;
+        }
+
+        for (const [name, values] of Object.entries(landUse)) {
+
+            const card = document.createElement("div");
+            card.className = "land-card";
+
+            card.innerHTML = `
+                <h3>${name}</h3>
+                <div class="percentage">${values.percentage}%</div>
+                <div class="pixels">${values.pixels} pixels</div>
+            `;
+
+            cards.appendChild(card);
+        }
+    }
+
+    function displayReport(report) {
+
+        if (!report) {
+            return;
+        }
+
+        document.getElementById("dominantLandUse").innerText =
+            report.dominant_land_use || "N/A";
+
+        document.getElementById("dominantPercentage").innerText =
+            report.dominant_percentage || 0;
+
+        document.getElementById("summary").innerText =
+            report.summary || "No summary available.";
+
+        const observations =
+            document.getElementById("observations");
+
+        observations.innerHTML = "";
+
+        if (report.observations) {
+            report.observations.forEach(item => {
+                const li = document.createElement("li");
+                li.innerText = item;
+                observations.appendChild(li);
+            });
+        }
+
+        const recommendations =
+            document.getElementById("recommendations");
+
+        recommendations.innerHTML = "";
+
+        if (report.recommendations) {
+            report.recommendations.forEach(item => {
+                const li = document.createElement("li");
+                li.innerText = item;
+                recommendations.appendChild(li);
+            });
+        }
+    }
+
+    function downloadOriginal() {
+
+        if (!originalImageData) {
+            alert("Original image is not available.");
+            return;
+        }
+
+        downloadBase64Image(
+            originalImageData,
+            "original_image.png"
+        );
+    }
+
+    function downloadSegmentation() {
+
+        if (!segmentationImageData) {
+            alert("Segmentation image is not available.");
+            return;
+        }
+
+        if (segmentationImageData.startsWith("http")) {
+
+            const link = document.createElement("a");
+            link.href = segmentationImageData;
+            link.download = "predicted_segmentation.png";
+            link.target = "_blank";
+            link.click();
+
+        } else {
+
+            downloadBase64Image(
+                segmentationImageData,
+                "predicted_segmentation.png"
+            );
+        }
+    }
+
+    function downloadBase64Image(base64Data, filename) {
+
+        let href = base64Data;
+
+        if (!base64Data.startsWith("data:image")) {
+            href = "data:image/png;base64," + base64Data;
+        }
+
+        const link = document.createElement("a");
+        link.href = href;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function downloadReport() {
+
+        if (!latestReport) {
+            alert("Please analyze an image first.");
+            return;
+        }
+
+        const report = latestReport.ai_report || {};
+        const landUse = latestReport.land_use_analysis || {};
+
+        let text = "URBAN PARCEL MAPPING - AI ANALYSIS REPORT\n";
+        text += "========================================\n\n";
+
+        text += "Dominant Land Use: " +
+            (report.dominant_land_use || "N/A") + "\n";
+
+        text += "Dominant Percentage: " +
+            (report.dominant_percentage || 0) + "%\n\n";
+
+        text += "Summary:\n";
+        text += (report.summary || "N/A") + "\n\n";
+
+        text += "LAND-USE DISTRIBUTION\n";
+        text += "---------------------\n";
+
+        for (const [name, values] of Object.entries(landUse)) {
+            text += `${name}: ${values.percentage}% (${values.pixels} pixels)\n`;
+        }
+
+        text += "\nOBSERVATIONS\n";
+        text += "------------\n";
+
+        if (report.observations) {
+            report.observations.forEach(item => {
+                text += "- " + item + "\n";
+            });
+        }
+
+        text += "\nRECOMMENDATIONS\n";
+        text += "---------------\n";
+
+        if (report.recommendations) {
+            report.recommendations.forEach(item => {
+                text += "- " + item + "\n";
+            });
+        }
+
+        const blob = new Blob([text], {
+            type: "text/plain"
+        });
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "land_use_analysis_report.txt";
+        link.click();
+
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>
