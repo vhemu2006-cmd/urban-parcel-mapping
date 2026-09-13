@@ -60,7 +60,8 @@ if not os.path.exists(MODEL_PATH):
 model.load_state_dict(
     torch.load(
         MODEL_PATH,
-        map_location=device
+        map_location=device,
+        weights_only=True
     )
 )
 
@@ -82,16 +83,16 @@ CLASS_NAMES = {
 }
 
 
-# Correct RGB colors
+# RGB colors
 COLOR_MAP = {
-    0: (0, 0, 0),          # Black - No-data
-    1: (255, 255, 255),    # White - Background
-    2: (255, 0, 0),        # Red - Building
-    3: (0, 0, 255),        # Blue - Road
-    4: (0, 255, 255),      # Cyan - Water
-    5: (255, 255, 0),      # Yellow - Barren Land
-    6: (0, 255, 0),        # Green - Forest
-    7: (0, 128, 0)         # Dark Green - Agriculture
+    0: (0, 0, 0),
+    1: (255, 255, 255),
+    2: (255, 0, 0),
+    3: (0, 0, 255),
+    4: (0, 255, 255),
+    5: (255, 255, 0),
+    6: (0, 255, 0),
+    7: (0, 128, 0)
 }
 
 
@@ -126,7 +127,7 @@ async def predict(file: UploadFile = File(...)):
 
         image_array = np.frombuffer(
             contents,
-            np.uint8
+            dtype=np.uint8
         )
 
         image = cv2.imdecode(
@@ -159,15 +160,26 @@ async def predict(file: UploadFile = File(...)):
 
         # -----------------------------------
         # 4. Convert image to tensor
+        # Avoid NumPy-to-Torch conversion issue
         # -----------------------------------
-        image_tensor = torch.tensor(
-            resized_image,
-            dtype=torch.float32
+        image_bytes = resized_image.tobytes()
+
+        image_tensor = torch.frombuffer(
+            image_bytes,
+            dtype=torch.uint8
+        ).clone()
+
+        image_tensor = image_tensor.reshape(
+            256,
+            256,
+            3
         )
 
         image_tensor = image_tensor.permute(
-            2, 0, 1
-        ) / 255.0
+            2,
+            0,
+            1
+        ).float() / 255.0
 
         image_tensor = image_tensor.unsqueeze(
             0
@@ -180,10 +192,17 @@ async def predict(file: UploadFile = File(...)):
 
             output = model(image_tensor)
 
-            prediction = torch.argmax(
+            prediction_tensor = torch.argmax(
                 output,
                 dim=1
-            ).squeeze(0).cpu().numpy()
+            ).squeeze(0).cpu()
+
+        # Convert tensor to Python list first
+        # This avoids torch.numpy() compatibility issue
+        prediction = np.array(
+            prediction_tensor.tolist(),
+            dtype=np.int64
+        )
 
         # -----------------------------------
         # 6. Calculate land-use distribution
@@ -225,7 +244,7 @@ async def predict(file: UploadFile = File(...)):
         # -----------------------------------
         # 8. Encode original image
         # -----------------------------------
-        _, original_buffer = cv2.imencode(
+        success_original, original_buffer = cv2.imencode(
             ".png",
             cv2.cvtColor(
                 resized_image,
@@ -233,14 +252,17 @@ async def predict(file: UploadFile = File(...)):
             )
         )
 
+        if not success_original:
+            raise Exception("Failed to encode original image")
+
         original_base64 = base64.b64encode(
-            original_buffer
+            original_buffer.tobytes()
         ).decode("utf-8")
 
         # -----------------------------------
         # 9. Encode segmentation image
         # -----------------------------------
-        _, mask_buffer = cv2.imencode(
+        success_mask, mask_buffer = cv2.imencode(
             ".png",
             cv2.cvtColor(
                 colored_mask,
@@ -248,8 +270,11 @@ async def predict(file: UploadFile = File(...)):
             )
         )
 
+        if not success_mask:
+            raise Exception("Failed to encode segmentation image")
+
         segmentation_base64 = base64.b64encode(
-            mask_buffer
+            mask_buffer.tobytes()
         ).decode("utf-8")
 
         # -----------------------------------
