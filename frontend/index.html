@@ -14,64 +14,63 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background: #eef7fc;
-            color: #123b68;
+            color: #123b69;
         }
 
         header {
-            background: linear-gradient(120deg, #174d9b, #1976d2);
+            background: linear-gradient(120deg, #1554a0, #217bd1);
             color: white;
             text-align: center;
-            padding: 40px 15px;
+            padding: 45px 20px;
         }
 
         header h1 {
-            font-size: clamp(32px, 5vw, 60px);
-            margin: 0 0 15px;
+            font-size: clamp(35px, 5vw, 70px);
+            margin: 0 0 25px;
         }
 
         header p {
-            font-size: clamp(18px, 3vw, 30px);
+            font-size: clamp(20px, 3vw, 34px);
             margin: 0;
         }
 
         .container {
-            width: 95%;
+            width: 94%;
             max-width: 1600px;
-            margin: 35px auto;
+            margin: 45px auto;
         }
 
         .upload-box {
             background: white;
-            padding: 50px 20px;
             border-radius: 28px;
+            padding: 65px 25px;
             text-align: center;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.08);
         }
 
         .upload-box h2 {
-            font-size: clamp(25px, 4vw, 38px);
-            margin-bottom: 35px;
+            font-size: clamp(28px, 3vw, 48px);
+            margin-bottom: 45px;
         }
 
         input[type="file"] {
+            font-size: 20px;
             max-width: 100%;
-            font-size: 18px;
-            margin-bottom: 25px;
         }
 
         button {
-            background: #215acb;
+            background: #225dcc;
             color: white;
             border: none;
-            border-radius: 14px;
-            padding: 16px 30px;
-            font-size: 20px;
+            border-radius: 15px;
+            padding: 18px 40px;
+            font-size: 22px;
             cursor: pointer;
-            margin: 8px;
+            margin: 30px 10px 0;
         }
 
         button:hover {
-            background: #123f9d;
+            background: #17469f;
         }
 
         button:disabled {
@@ -79,88 +78,103 @@
             cursor: not-allowed;
         }
 
-        #loading {
-            display: none;
-            text-align: center;
+        .message {
+            margin-top: 25px;
+            padding: 22px;
+            border-radius: 15px;
             font-size: 20px;
-            font-weight: bold;
-            margin: 25px;
+            display: none;
         }
 
-        #error {
-            display: none;
-            background: #ffdede;
-            color: #a00000;
-            padding: 18px;
-            border-radius: 12px;
-            margin: 25px 0;
-            font-size: 18px;
-            overflow-wrap: break-word;
+        .error {
+            background: #ffdada;
+            color: #b00000;
         }
 
-        #results {
+        .success {
+            background: #d8ffe4;
+            color: #08752c;
+        }
+
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .results {
             display: none;
+            margin-top: 45px;
         }
 
         .image-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 25px;
-            margin-top: 35px;
+            gap: 35px;
         }
 
         .card {
             background: white;
-            padding: 22px;
             border-radius: 25px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.07);
             min-width: 0;
         }
 
         .card h2 {
             text-align: center;
-            font-size: clamp(24px, 3vw, 36px);
-            margin: 0 0 22px;
+            font-size: clamp(25px, 3vw, 40px);
+            margin: 0 0 25px;
         }
 
         .result-image {
+            display: block;
             width: 100%;
-            height: auto;
             max-height: 650px;
             object-fit: contain;
-            display: block;
-            border-radius: 15px;
-            border: 5px solid #d8e5f2;
-            background: #f5f5f5;
+            border-radius: 18px;
+            border: 5px solid #d8e5ef;
+        }
+
+        .download-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 35px 0;
+        }
+
+        .download-buttons button {
+            margin: 0;
+            font-size: 18px;
+            padding: 16px 28px;
         }
 
         .section-title {
-            font-size: clamp(28px, 4vw, 42px);
+            font-size: clamp(28px, 4vw, 50px);
             margin: 45px 0 25px;
         }
 
         .distribution {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
         }
 
         .land-card {
             background: white;
-            border-radius: 15px;
-            padding: 22px;
+            padding: 25px 15px;
+            border-radius: 18px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
         }
 
         .land-card h3 {
-            margin: 0 0 12px;
-            font-size: 19px;
-            overflow-wrap: break-word;
+            margin: 0 0 15px;
+            font-size: 20px;
         }
 
         .land-card p {
-            font-size: 25px;
+            font-size: 28px;
             font-weight: bold;
             margin: 0;
         }
@@ -168,75 +182,55 @@
         .report {
             background: white;
             border-radius: 25px;
-            padding: 30px;
-            margin-top: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-            font-size: 19px;
+            padding: 35px;
+            margin-top: 35px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.07);
+            font-size: 20px;
             line-height: 1.7;
-            overflow-wrap: break-word;
         }
 
         .report h2 {
-            font-size: clamp(28px, 4vw, 40px);
+            font-size: 38px;
             margin-top: 0;
         }
 
         .report h3 {
-            color: #2161c7;
-            font-size: 23px;
-            margin-bottom: 5px;
-        }
-
-        .report p {
-            margin-top: 0;
-        }
-
-        .report ul {
-            padding-left: 25px;
-        }
-
-        .buttons {
-            text-align: center;
-            margin: 30px 0;
+            color: #2161c4;
+            margin-bottom: 8px;
         }
 
         .legend {
             background: white;
             border-radius: 25px;
             padding: 30px;
-            margin-top: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        }
-
-        .legend h2 {
-            font-size: clamp(25px, 3vw, 34px);
+            margin-top: 35px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.07);
         }
 
         .legend-items {
             display: flex;
             flex-wrap: wrap;
-            gap: 18px;
+            gap: 20px;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 17px;
+            font-size: 18px;
         }
 
-        .color-box {
+        .color {
             width: 22px;
             height: 22px;
-            border: 1px solid #555;
+            border-radius: 4px;
             display: inline-block;
         }
 
         footer {
             text-align: center;
-            font-size: 20px;
-            padding: 35px 15px;
-            color: #47729e;
+            padding: 45px 20px;
+            font-size: 22px;
         }
 
         @media (max-width: 900px) {
@@ -245,19 +239,21 @@
             }
 
             .upload-box {
-                padding: 35px 15px;
+                padding: 40px 15px;
             }
 
             button {
                 width: 90%;
-                max-width: 400px;
-                font-size: 18px;
+                max-width: 350px;
             }
 
-            .buttons {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
+            .download-buttons button {
+                width: 100%;
+                max-width: 450px;
+            }
+
+            .report {
+                padding: 25px;
             }
         }
     </style>
@@ -275,7 +271,11 @@
     <div class="upload-box">
         <h2>Upload Aerial Image</h2>
 
-        <input type="file" id="imageInput" accept="image/*">
+        <input
+            type="file"
+            id="imageInput"
+            accept="image/*"
+        >
 
         <br>
 
@@ -284,13 +284,9 @@
         </button>
     </div>
 
-    <div id="loading">
-        Processing image using AI model. Please wait...
-    </div>
+    <div id="message" class="message"></div>
 
-    <div id="error"></div>
-
-    <div id="results">
+    <div id="results" class="results">
 
         <div class="image-grid">
 
@@ -314,12 +310,12 @@
 
         </div>
 
-        <div class="buttons">
-            <button onclick="downloadOriginal()">
+        <div class="download-buttons">
+            <button onclick="downloadImage('originalImage', 'original_image.png')">
                 Download Original Image
             </button>
 
-            <button onclick="downloadSegmentation()">
+            <button onclick="downloadImage('segmentationImage', 'segmentation_image.png')">
                 Download Segmentation Image
             </button>
 
@@ -345,61 +341,55 @@
             <p id="summary">Not available</p>
 
             <h3>Observations:</h3>
-            <ul id="observations">
-                <li>Waiting for analysis...</li>
-            </ul>
+            <ul id="observations"></ul>
 
             <h3>Recommendations:</h3>
-            <ul id="recommendations">
-                <li>Waiting for analysis...</li>
-            </ul>
+            <ul id="recommendations"></ul>
         </div>
 
         <div class="legend">
             <h2>Segmentation Color Legend</h2>
 
             <div class="legend-items">
-
                 <div class="legend-item">
-                    <span class="color-box" style="background:black"></span>
+                    <span class="color" style="background:black"></span>
                     No-data
                 </div>
 
                 <div class="legend-item">
-                    <span class="color-box" style="background:white"></span>
+                    <span class="color" style="background:white;border:1px solid #aaa"></span>
                     Background
                 </div>
 
                 <div class="legend-item">
-                    <span class="color-box" style="background:red"></span>
+                    <span class="color" style="background:red"></span>
                     Building
                 </div>
 
                 <div class="legend-item">
-                    <span class="color-box" style="background:blue"></span>
+                    <span class="color" style="background:blue"></span>
                     Road
                 </div>
 
                 <div class="legend-item">
-                    <span class="color-box" style="background:cyan"></span>
+                    <span class="color" style="background:cyan"></span>
                     Water
                 </div>
 
                 <div class="legend-item">
-                    <span class="color-box" style="background:yellow"></span>
+                    <span class="color" style="background:yellow"></span>
                     Barren Land
                 </div>
 
                 <div class="legend-item">
-                    <span class="color-box" style="background:lime"></span>
+                    <span class="color" style="background:lime"></span>
                     Forest
                 </div>
 
                 <div class="legend-item">
-                    <span class="color-box" style="background:green"></span>
+                    <span class="color" style="background:green"></span>
                     Agriculture
                 </div>
-
             </div>
         </div>
 
@@ -413,31 +403,34 @@
 <script>
     const API_URL = "https://urban-parcel-mapping.onrender.com";
 
-    let originalImageData = "";
-    let segmentationImageData = "";
-    let reportData = {};
+    let latestReport = null;
+
+    function showMessage(text, type) {
+        const message = document.getElementById("message");
+        message.textContent = text;
+        message.className = "message " + type;
+        message.style.display = "block";
+    }
 
     async function analyzeImage() {
-        const fileInput = document.getElementById("imageInput");
-        const analyzeBtn = document.getElementById("analyzeBtn");
-        const loading = document.getElementById("loading");
-        const errorBox = document.getElementById("error");
+        const input = document.getElementById("imageInput");
+        const button = document.getElementById("analyzeBtn");
         const results = document.getElementById("results");
 
-        if (!fileInput.files || fileInput.files.length === 0) {
-            alert("Please select an image first.");
+        if (!input.files || input.files.length === 0) {
+            showMessage("Please select an image first.", "error");
             return;
         }
 
-        const file = fileInput.files[0];
-
+        const file = input.files[0];
         const formData = new FormData();
         formData.append("file", file);
 
-        loading.style.display = "block";
-        errorBox.style.display = "none";
+        button.disabled = true;
+        button.textContent = "Analyzing...";
         results.style.display = "none";
-        analyzeBtn.disabled = true;
+
+        showMessage("Analyzing image using AI model. Please wait...", "loading");
 
         try {
             const response = await fetch(`${API_URL}/predict`, {
@@ -447,29 +440,15 @@
 
             const data = await response.json();
 
-            if (!response.ok) {
+            if (!response.ok || data.status !== "success") {
                 throw new Error(
-                    data.message || `Server error: ${response.status}`
+                    data.message || "Server failed to analyze the image."
                 );
             }
 
-            if (!data || data.status !== "success") {
-                throw new Error(
-                    data.message || "Prediction failed"
-                );
+            if (!data.original_image || !data.segmentation_image) {
+                throw new Error("Images were not returned by the server.");
             }
-
-            if (!data.original_image) {
-                throw new Error("Original image was not returned by server.");
-            }
-
-            if (!data.segmentation_image) {
-                throw new Error("Segmentation image was not returned by server.");
-            }
-
-            originalImageData = data.original_image;
-            segmentationImageData = data.segmentation_image;
-            reportData = data;
 
             document.getElementById("originalImage").src =
                 "data:image/png;base64," + data.original_image;
@@ -477,243 +456,141 @@
             document.getElementById("segmentationImage").src =
                 "data:image/png;base64," + data.segmentation_image;
 
-            displayDistribution(data.land_use_analysis || {});
-            displayReport(data.ai_report || {}, data.land_use_analysis || {});
+            displayDistribution(data.land_use_analysis);
+            displayReport(data.ai_report);
+
+            latestReport = {
+                land_use_analysis: data.land_use_analysis,
+                ai_report: data.ai_report
+            };
 
             results.style.display = "block";
+            showMessage("Image analyzed successfully!", "success");
 
-            setTimeout(() => {
-                results.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-            }, 200);
+            results.scrollIntoView({
+                behavior: "smooth"
+            });
 
         } catch (error) {
-            console.error("Prediction error:", error);
-
-            errorBox.innerText =
-                "Error while analyzing image: " + error.message;
-
-            errorBox.style.display = "block";
+            console.error("Analysis error:", error);
+            showMessage(
+                "Error while analyzing image: " + error.message,
+                "error"
+            );
         } finally {
-            loading.style.display = "none";
-            analyzeBtn.disabled = false;
+            button.disabled = false;
+            button.textContent = "Analyze Image";
         }
     }
 
     function displayDistribution(analysis) {
-        const distribution = document.getElementById("distribution");
-        distribution.innerHTML = "";
+        const container = document.getElementById("distribution");
+        container.innerHTML = "";
 
-        const entries = Object.entries(analysis);
-
-        if (entries.length === 0) {
-            distribution.innerHTML =
-                "<p>No land-use distribution available.</p>";
+        if (!analysis) {
+            container.innerHTML = "<p>No land-use data available.</p>";
             return;
         }
 
-        for (const [className, details] of entries) {
-            const percentage = Number(details.percentage || 0);
-
-            if (percentage <= 0) {
-                continue;
-            }
-
+        for (const [className, values] of Object.entries(analysis)) {
             const card = document.createElement("div");
             card.className = "land-card";
 
-            const heading = document.createElement("h3");
-            heading.innerText = className;
+            card.innerHTML = `
+                <h3>${className}</h3>
+                <p>${values.percentage}%</p>
+                <small>${values.pixels} pixels</small>
+            `;
 
-            const value = document.createElement("p");
-            value.innerText = percentage + "%";
-
-            card.appendChild(heading);
-            card.appendChild(value);
-
-            distribution.appendChild(card);
+            container.appendChild(card);
         }
     }
 
-    function displayReport(report, analysis) {
-        let dominantClass = "Not available";
-        let dominantPercentage = 0;
-
-        for (const [className, details] of Object.entries(analysis)) {
-            const percentage = Number(details.percentage || 0);
-
-            if (percentage > dominantPercentage) {
-                dominantClass = className;
-                dominantPercentage = percentage;
-            }
-        }
-
-        document.getElementById("dominantLandUse").innerText =
-            dominantClass;
-
-        document.getElementById("dominantPercentage").innerText =
-            dominantPercentage + "%";
-
-        let summaryText = "";
-
-        if (report && report.summary) {
-            summaryText = report.summary;
-        } else {
-            summaryText =
-                `The analyzed area is mainly classified as ${dominantClass}, covering approximately ${dominantPercentage}% of the image.`;
-        }
-
-        document.getElementById("summary").innerText = summaryText;
-
-        const observationsList =
-            document.getElementById("observations");
-
-        observationsList.innerHTML = "";
-
-        let observations = [];
-
-        if (report && Array.isArray(report.observations)) {
-            observations = report.observations;
-        }
-
-        if (observations.length === 0) {
-            observations = [
-                "Land-use distribution was successfully generated.",
-                `The dominant land-use category is ${dominantClass}.`,
-                `The dominant category covers approximately ${dominantPercentage}% of the image.`
-            ];
-        }
-
-        observations.forEach(item => {
-            const li = document.createElement("li");
-            li.innerText = item;
-            observationsList.appendChild(li);
-        });
-
-        const recommendationsList =
-            document.getElementById("recommendations");
-
-        recommendationsList.innerHTML = "";
-
-        let recommendations = [];
-
-        if (report && Array.isArray(report.recommendations)) {
-            recommendations = report.recommendations;
-        }
-
-        if (recommendations.length === 0) {
-            recommendations = [
-                "Use the predicted land-use information for urban planning.",
-                "Review building and road distribution for infrastructure planning.",
-                "Use additional geographic data for detailed planning decisions."
-            ];
-        }
-
-        recommendations.forEach(item => {
-            const li = document.createElement("li");
-            li.innerText = item;
-            recommendationsList.appendChild(li);
-        });
-    }
-
-    function downloadOriginal() {
-        if (!originalImageData) {
-            alert("Please analyze an image first.");
+    function displayReport(report) {
+        if (!report) {
             return;
         }
 
-        downloadBase64(
-            originalImageData,
-            "original_image.png"
-        );
+        document.getElementById("dominantLandUse").textContent =
+            report.dominant_land_use ||
+            report.dominant_class ||
+            "Not available";
+
+        document.getElementById("dominantPercentage").textContent =
+            report.dominant_percentage !== undefined
+                ? report.dominant_percentage + "%"
+                : "Not available";
+
+        document.getElementById("summary").textContent =
+            report.summary || "Analysis completed successfully.";
+
+        const observations = document.getElementById("observations");
+        observations.innerHTML = "";
+
+        const observationList =
+            report.observations || report.observation || [];
+
+        if (Array.isArray(observationList)) {
+            observationList.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                observations.appendChild(li);
+            });
+        }
+
+        const recommendations = document.getElementById("recommendations");
+        recommendations.innerHTML = "";
+
+        const recommendationList = report.recommendations || [];
+
+        if (Array.isArray(recommendationList)) {
+            recommendationList.forEach(item => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                recommendations.appendChild(li);
+            });
+        }
     }
 
-    function downloadSegmentation() {
-        if (!segmentationImageData) {
-            alert("Please analyze an image first.");
+    function downloadImage(imageId, filename) {
+        const image = document.getElementById(imageId);
+
+        if (!image.src) {
+            alert("Image is not available.");
             return;
         }
 
-        downloadBase64(
-            segmentationImageData,
-            "segmentation_image.png"
-        );
-    }
-
-    function downloadBase64(base64Data, filename) {
         const link = document.createElement("a");
-
-        link.href = "data:image/png;base64," + base64Data;
+        link.href = image.src;
         link.download = filename;
-
-        document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
     }
 
     function downloadReport() {
-        if (!reportData || !reportData.land_use_analysis) {
+        if (!latestReport) {
             alert("Please analyze an image first.");
             return;
         }
 
-        let text =
-            "URBAN PARCEL MAPPING - AI ANALYSIS REPORT\n";
+        const reportText = JSON.stringify(
+            latestReport,
+            null,
+            4
+        );
 
-        text +=
-            "================================================\n\n";
+        const blob = new Blob(
+            [reportText],
+            { type: "application/json" }
+        );
 
-        text += "Dominant Land Use: ";
-        text += document.getElementById("dominantLandUse").innerText;
-        text += "\n";
-
-        text += "Dominant Percentage: ";
-        text += document.getElementById("dominantPercentage").innerText;
-        text += "\n\n";
-
-        text += "Land-Use Distribution:\n\n";
-
-        for (const [className, details] of Object.entries(
-            reportData.land_use_analysis
-        )) {
-            text += `${className}: ${details.percentage}%\n`;
-        }
-
-        text += "\nAI Summary:\n";
-        text += document.getElementById("summary").innerText;
-
-        text += "\n\nObservations:\n";
-
-        document
-            .querySelectorAll("#observations li")
-            .forEach(item => {
-                text += "- " + item.innerText + "\n";
-            });
-
-        text += "\nRecommendations:\n";
-
-        document
-            .querySelectorAll("#recommendations li")
-            .forEach(item => {
-                text += "- " + item.innerText + "\n";
-            });
-
-        const blob = new Blob([text], {
-            type: "text/plain"
-        });
-
+        const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
 
-        link.href = URL.createObjectURL(blob);
-        link.download = "urban_land_use_analysis_report.txt";
-
-        document.body.appendChild(link);
+        link.href = url;
+        link.download = "urban_land_use_analysis_report.json";
         link.click();
-        document.body.removeChild(link);
 
-        URL.revokeObjectURL(link.href);
+        URL.revokeObjectURL(url);
     }
 </script>
 
